@@ -1,0 +1,5 @@
+zn "USER"
+Set sc = $SYSTEM.OBJ.LoadDir("/opt/irisapp/src/cls", "ck", .err, 1)
+Write !, "iris-whatsapp-adapter load status: ", $System.Status.GetErrorText(sc), !
+Do ##class(IrisWhatsApp.Setup).Run()
+Halt

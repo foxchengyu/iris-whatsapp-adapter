@@ -1,0 +1,16 @@
+services:
+  iris:
+    build:
+      context: .
+    container_name: iris-whatsapp-adapter
+    ports:
+      - "52773:52773"
+      - "1972:1972"
+    environment:
+      # WhatsApp Cloud API credentials
+      WA_ACCESS_TOKEN: ${WA_ACCESS_TOKEN:-}
+      WA_PHONE_NUMBER_ID: ${WA_PHONE_NUMBER_ID:-}
+      WA_VERIFY_TOKEN: ${WA_VERIFY_TOKEN:-}
+      # Optional HTTP proxy
+      WA_PROXY: ${WA_PROXY:-}
+    restart: unless-stopped

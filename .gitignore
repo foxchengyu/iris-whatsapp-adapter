@@ -1,0 +1,24 @@
+# IRIS / ObjectScript
+*.gbl
+*.int
+*.obj
+*.0
+iris.log
+messages.log
+alerts.log
+journal/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local configuration and secrets
+.env
+docker-compose.override.yml
+
+# Python
+__pycache__/
+*.pyc
+.venv/

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26">
+  <Document name="iris-whatsapp-adapter.ZPM">
+    <Module>
+      <Name>iris-whatsapp-adapter</Name>
+      <Version>1.0.0</Version>
+      <Description>InterSystems IRIS Interoperability adapter for WhatsApp Cloud API. Send and receive WhatsApp messages directly from your IRIS production.</Description>
+      <Keywords>whatsapp,messaging,interoperability,adapter,meta</Keywords>
+      <License>MIT</License>
+      <Packaging>module</Packaging>
+      <SourcesRoot>src/cls</SourcesRoot>
+      <Resource Name="IrisWhatsApp.TLS.CLS"/>
+      <Resource Name="IrisWhatsApp.Utils.CLS"/>
+      <Resource Name="IrisWhatsApp.Msg.TextRequest.CLS"/>
+      <Resource Name="IrisWhatsApp.Msg.SendResponse.CLS"/>
+      <Resource Name="IrisWhatsApp.Msg.WebhookRequest.CLS"/>
+      <Resource Name="IrisWhatsApp.Out.Adapter.CLS"/>
+      <Resource Name="IrisWhatsApp.Out.Operation.CLS"/>
+      <Resource Name="IrisWhatsApp.In.Service.CLS"/>
+      <Resource Name="IrisWhatsApp.Webhook.CLS"/>
+      <Resource Name="IrisWhatsApp.Setup.CLS"/>
+    </Module>
+  </Document>
+</Export>
