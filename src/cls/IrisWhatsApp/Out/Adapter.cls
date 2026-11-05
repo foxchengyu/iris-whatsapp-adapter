@@ -65,14 +65,15 @@ Method OnInit() As %Status
 /// <var>pTo</var> must be in international format, e.g. "8613800138000".
 Method SendText(pTo As %String, pBody As %String, pPreviewUrl As %Boolean = 0) As %DynamicObject
 {
-    Set tPayload = {}
-    Set tPayload.messaging_product = "whatsapp"
-    Set tPayload.recipient_type = "individual"
-    Set tPayload.to = pTo
-    Set tPayload.type = "text"
-    Set tPayload.text = {}
-    Set tPayload.text.preview_url = pPreviewUrl
-    Set tPayload.text.body = pBody
+    Set tPayload = ##class(%DynamicObject).%New()
+    Do tPayload.%Set("messaging_product", "whatsapp")
+    Do tPayload.%Set("recipient_type", "individual")
+    Do tPayload.%Set("to", pTo)
+    Do tPayload.%Set("type", "text")
+    Set tText = ##class(%DynamicObject).%New()
+    Do tText.%Set("preview_url", pPreviewUrl)
+    Do tText.%Set("body", pBody)
+    Do tPayload.%Set("text", tText)
     Set tPath = "/" _ ..ApiVersion _ "/" _ ..PhoneNumberID _ "/messages"
     Quit ..PostAPI(tPath, tPayload)
 }
@@ -81,18 +82,20 @@ Method SendText(pTo As %String, pBody As %String, pPreviewUrl As %Boolean = 0) A
 /// of component objects (header / body / button parameters).
 Method SendTemplate(pTo As %String, pTemplateName As %String, pLanguage As %String = "en", pComponents As %DynamicArray = "") As %DynamicObject
 {
-    Set tPayload = {}
-    Set tPayload.messaging_product = "whatsapp"
-    Set tPayload.recipient_type = "individual"
-    Set tPayload.to = pTo
-    Set tPayload.type = "template"
-    Set tPayload.template = {}
-    Set tPayload.template.name = pTemplateName
-    Set tPayload.template.language = {}
-    Set tPayload.template.language.code = pLanguage
+    Set tPayload = ##class(%DynamicObject).%New()
+    Do tPayload.%Set("messaging_product", "whatsapp")
+    Do tPayload.%Set("recipient_type", "individual")
+    Do tPayload.%Set("to", pTo)
+    Do tPayload.%Set("type", "template")
+    Set tTemplate = ##class(%DynamicObject).%New()
+    Do tTemplate.%Set("name", pTemplateName)
+    Set tLanguage = ##class(%DynamicObject).%New()
+    Do tLanguage.%Set("code", pLanguage)
+    Do tTemplate.%Set("language", tLanguage)
     If $IsObject(pComponents) && (pComponents.%Size() > 0) {
-        Set tPayload.template.components = pComponents
+        Do tTemplate.%Set("components", pComponents)
     }
+    Do tPayload.%Set("template", tTemplate)
     Set tPath = "/" _ ..ApiVersion _ "/" _ ..PhoneNumberID _ "/messages"
     Quit ..PostAPI(tPath, tPayload)
 }
@@ -101,13 +104,13 @@ Method SendTemplate(pTo As %String, pTemplateName As %String, pLanguage As %Stri
 /// <var>pInteractive</var> is the interactive-object per the WhatsApp API spec.
 Method SendInteractive(pTo As %String, pInteractive As %DynamicObject) As %DynamicObject
 {
-    Set tPayload = {}
-    Set tPayload.messaging_product = "whatsapp"
-    Set tPayload.recipient_type = "individual"
-    Set tPayload.to = pTo
-    Set tPayload.type = "interactive"
+    Set tPayload = ##class(%DynamicObject).%New()
+    Do tPayload.%Set("messaging_product", "whatsapp")
+    Do tPayload.%Set("recipient_type", "individual")
+    Do tPayload.%Set("to", pTo)
+    Do tPayload.%Set("type", "interactive")
     If $IsObject(pInteractive) {
-        Set tPayload.interactive = pInteractive
+        Do tPayload.%Set("interactive", pInteractive)
     }
     Set tPath = "/" _ ..ApiVersion _ "/" _ ..PhoneNumberID _ "/messages"
     Quit ..PostAPI(tPath, tPayload)
@@ -116,10 +119,10 @@ Method SendInteractive(pTo As %String, pInteractive As %DynamicObject) As %Dynam
 /// Mark an incoming message as read.
 Method MarkAsRead(pMessageId As %String) As %DynamicObject
 {
-    Set tPayload = {}
-    Set tPayload.messaging_product = "whatsapp"
-    Set tPayload.status = "read"
-    Set tPayload.message_id = pMessageId
+    Set tPayload = ##class(%DynamicObject).%New()
+    Do tPayload.%Set("messaging_product", "whatsapp")
+    Do tPayload.%Set("status", "read")
+    Do tPayload.%Set("message_id", pMessageId)
     Set tPath = "/" _ ..ApiVersion _ "/" _ ..PhoneNumberID _ "/messages"
     Quit ..PostAPI(tPath, tPayload)
 }
@@ -131,7 +134,7 @@ Method DownloadMedia(pMediaId As %String, Output pContentType As %String) As %St
     Set tPath = "/" _ ..ApiVersion _ "/" _ pMediaId
     Set tURL = "https://graph.facebook.com" _ tPath _ "?access_token=" _ ..AccessToken
     Set http = ..NewRequest()
-    Do http.RemoveHeader("Content-Type")  // No JSON body for GET
+    Do http.RemoveHeader("Content-Type")
     Set sc = http.Get(tURL)
     If $System.Status.IsError(sc) {
         Do ##class(IrisWhatsApp.Utils).Fail("Media download failed: " _ $System.Status.GetErrorText(sc))

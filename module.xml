@@ -19,6 +19,7 @@
       <Resource Name="IrisWhatsApp.In.Service.CLS"/>
       <Resource Name="IrisWhatsApp.Webhook.CLS"/>
       <Resource Name="IrisWhatsApp.Setup.CLS"/>
+      <Resource Name="IrisWhatsApp.Production.CLS"/>
     </Module>
   </Document>
 </Export>

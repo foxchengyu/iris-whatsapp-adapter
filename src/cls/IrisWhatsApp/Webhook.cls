@@ -40,21 +40,29 @@ ClassMethod HandleVerification() As %Status
     Set tToken = $Get(%request.Data("hub.verify_token", 1))
     Set tChallenge = $Get(%request.Data("hub.challenge", 1))
 
+    Set tDone = 0
+
     If tMode '= "subscribe" {
         Set %response.Status = "400 Bad Request"
-        Do %response.Write("{""error"":""invalid hub.mode""}")
+        Write "{""error"":""invalid hub.mode""}"
+        Set tDone = 1
+    }
+    If tDone {
         Quit $System.Status.OK()
     }
 
     Set tExpected = ..GetVerifyToken()
     If tToken '= tExpected {
         Set %response.Status = "403 Forbidden"
-        Do %response.Write("{""error"":""verify_token mismatch""}")
+        Write "{""error"":""verify_token mismatch""}"
+        Set tDone = 1
+    }
+    If tDone {
         Quit $System.Status.OK()
     }
 
     Set %response.ContentType = "text/plain"
-    Do %response.Write(tChallenge)
+    Write tChallenge
     Quit $System.Status.OK()
 }
 
@@ -71,9 +79,15 @@ ClassMethod HandleMessage() As %Status
         }
     }
 
+    Set tDone = 0
+    Set tPayload = ""
+
     If tBody = "" {
         Set %response.Status = "400 Bad Request"
-        Do %response.Write("{""error"":""empty body""}")
+        Write "{""error"":""empty body""}"
+        Set tDone = 1
+    }
+    If tDone {
         Quit $System.Status.OK()
     }
 
@@ -81,14 +95,21 @@ ClassMethod HandleMessage() As %Status
         Set tPayload = ##class(%DynamicObject).%FromJSON(tBody)
     } Catch ex {
         Set %response.Status = "400 Bad Request"
-        Do %response.Write("{""error"":""invalid JSON""}")
+        Write "{""error"":""invalid JSON""}"
+        Set tDone = 1
+    }
+    If tDone {
         Quit $System.Status.OK()
     }
 
     // Only process messages from WhatsApp Business Account
     If tPayload.%Get("object") '= "whatsapp_business_account" {
         Set %response.Status = "200 OK"
-        Do %response.Write("OK")
+        Write "OK"
+
+    Set tDone = 1
+    }
+    If tDone {
         Quit $System.Status.OK()
     }
 
@@ -106,7 +127,7 @@ ClassMethod HandleMessage() As %Status
     }
 
     Set %response.Status = "200 OK"
-    Do %response.Write("OK")
+    Write "OK"
     Quit $System.Status.OK()
 }
 
@@ -117,7 +138,7 @@ ClassMethod HandleTest() As %Status
 {
     Set %response.ContentType = "text/plain"
     Set tRunning = ##class(Ens.Director).IsProductionRunning()
-    Do %response.Write("iris-whatsapp-adapter webhook is up. Production: " _ $Select(tRunning: "running", 1: "stopped"))
+    Write "iris-whatsapp-adapter webhook is up. Production: " _ $Select(tRunning: "running", 1: "stopped")
     Quit $System.Status.OK()
 }
 
